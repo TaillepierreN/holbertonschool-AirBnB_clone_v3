@@ -51,10 +51,10 @@ def create_city(state_id):
     new_city = request.get_json()
     if new_city is None:
         abort(400, 'Not a JSON')
-    if "name" not in new_city:
+    if new_city.get('name') is None:
         abort(400, 'Missing name')
     new_city['state_id'] = state_id
-    city = City(**city)
+    city = City(**new_city)
     storage.new(city)
     storage.save()
     return jsonify(city.to_dict()), 201
