@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """View fo city objects"""
-from flask import jsonify, abort, request
 from api.v1.views import app_views
+from flask import jsonify, abort, request
 from models import storage
 from models.city import City
 from models.state import State
@@ -31,11 +31,12 @@ def get_city(city_id):
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
 def delete_city(city_id):
+    """delete a city object"""
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
     city.delete()
-    city.save()
+    storage.save()
     return jsonify({}), 200
 
 
@@ -49,9 +50,9 @@ def create_city(state_id):
 
     new_city = request.get_json()
     if new_city is None:
-        abort(404, 'Not a JSON')
+        abort(400, 'Not a JSON')
     if "name" not in new_city:
-        abort(404, 'Missing name')
+        abort(400, 'Missing name')
     new_city['state_id'] = state_id
     city = City(**city)
     storage.new(city)
@@ -67,7 +68,7 @@ def update_city(city_id):
         abort(404)
     updated_city = request.get_json()
     if updated_city is None:
-        abort(404, 'Not a JSON')
+        abort(400, 'Not a JSON')
         for key, value in updated_city.items():
             setattr(city, key, value)
         city.save()
