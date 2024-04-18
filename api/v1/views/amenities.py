@@ -3,6 +3,7 @@
 from api.v1.views import app_views
 from flask import jsonify, abort, request
 from models import storage
+from models import base_model
 from models.amenity import Amenity
 
 
@@ -61,6 +62,7 @@ def update_amenity(amenity_id):
     amenity = storage.get(Amenity, amenity_id)
     if amenity is None:
         abort(404)
+    
     up_amenity = request.get_json()
     if up_amenity is None:
         abort(400, 'Not a JSON')
