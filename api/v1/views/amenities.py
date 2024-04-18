@@ -10,11 +10,12 @@ from models.amenity import Amenity
 @app_views.route('/amenities', methods=['GET'], strict_slashes=False)
 def get_amenities():
     """Retrieves list of all Amenities objects"""
-    amenities = storage.all(Amenity)
-    amenities_list = []
-    for amenity in amenities.values():
-        amenities_list.append(amenity.to_dict())
-    return jsonify(amenities_list)
+    all_amenities = storage.all(Amenity).values()
+    list_amenities = []
+    for amenity in all_amenities:
+        list_amenities.append(amenity.to_dict())
+
+    return jsonify(list_amenities)
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['GET'],
@@ -24,6 +25,7 @@ def get_amenity(amenity_id):
     amenity = storage.get(Amenity, amenity_id)
     if amenity is None:
         abort(404)
+
     return jsonify(amenity.to_dict())
 
 
@@ -32,11 +34,12 @@ def get_amenity(amenity_id):
 def delete_amenity(amenity_id):
     """ Delete a amenity object """
     amenity = storage.get(Amenity, amenity_id)
-    if amenity is None:
+    if not amenity:
         abort(404)
 
-    storage.delete(amenity)
+    amenity.delete()
     storage.save()
+
     return jsonify({}), 200
 
 
@@ -45,14 +48,15 @@ def delete_amenity(amenity_id):
 def create_amenity():
     """ create a new amenity object """
     new_amenity = request.get_json()
-    if new_amenity is None:
+    if not new_amenity:
         abort(400, 'Not a JSON')
-    if new_amenity.get('name') is None:
+
+    if 'name' not in new_amenity:
         abort(400, 'Missing name')
 
     amenity = Amenity(**new_amenity)
-    storage.new(amenity)
-    storage.save()
+    amenity.save()
+
     return jsonify(amenity.to_dict()), 201
 
 
@@ -62,12 +66,13 @@ def update_amenity(amenity_id):
     amenity = storage.get(Amenity, amenity_id)
     if amenity is None:
         abort(404)
-    
+
     up_amenity = request.get_json()
     if up_amenity is None:
         abort(400, 'Not a JSON')
     for key, value in up_amenity.items():
         if key not in ['id', 'created_at', 'updated_at']:
             setattr(amenity, key, value)
-    storage.save()
+    amenity.save()
+
     return jsonify(amenity.to_dict()), 200
