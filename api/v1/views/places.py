@@ -11,7 +11,7 @@ from models.user import User
 @app_views.route("/cities/<city_id>/places",
                  methods=["GET"], strict_slashes=False)
 def get_places(city_id):
-    """Method that retrieves the list of all Place objects"""
+    """Retrieves all Place objects"""
     city = storage.get(City, city_id)
     if not city:
         abort(404)
@@ -25,7 +25,7 @@ def get_places(city_id):
 
 @app_views.route("/places/<place_id>", methods=["GET"], strict_slashes=False)
 def get_place(place_id):
-    """Method that retrieves a Place object with a specific id"""
+    """Retrieves a Place object with a specific id"""
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
@@ -36,7 +36,7 @@ def get_place(place_id):
 @app_views.route("/places/<place_id>", methods=["DELETE"],
                  strict_slashes=False)
 def delete_place(place_id):
-    """Method that deletes a Place object with a specific id"""
+    """Deletes a Place object with a specific id"""
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
@@ -49,7 +49,7 @@ def delete_place(place_id):
 @app_views.route("/cities/<city_id>/places",
                  methods=["POST"], strict_slashes=False)
 def new_place(city_id):
-    """Method that creates a Place object"""
+    """Creates a Place object"""
     place_data = request.get_json()
     if not place_data:
         abort(400, "Not a JSON")
@@ -72,7 +72,7 @@ def new_place(city_id):
 
 @app_views.route("/places/<place_id>", methods=["PUT"], strict_slashes=False)
 def update_place(place_id):
-    """Method that updates a Place object with a specific id"""
+    """Updates a Place object with a specific id"""
     place_data = request.get_json()
     place = storage.get(Place, place_id)
     if not place:
