@@ -9,6 +9,7 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
+import json
 
 
 @app_views.route("/status", strict_slashes=False)
@@ -28,4 +29,5 @@ def get_stats():
         "states": storage.count(State),
         "users": storage.count(User),
     }
-    return jsonify(stats)
+    json_dict = json.dumps(stats, indent=2)
+    return json_dict
