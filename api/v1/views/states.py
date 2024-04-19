@@ -1,18 +1,21 @@
 #!/usr/bin/python3
 """view of State objects as RESTful API"""
-from api.v1.views import app_views
-from flask import jsonify, abort, request
-from models import storage
 from models.state import State
+from models import storage
+from api.v1.views import app_views
+from flask import jsonify
+from flask import abort
+from flask import request
 
 
-@app_views.route('/states', methods=['GET'], strict_slashes=False)
+@app_views.route("/states", methods=["GET"], strict_slashes=False)
 def get_all_states():
-    """ Retrieve the list of all State"""
-    all_states = []
-    for state in storage.all(State).values():
-        all_states.append(state.to_dict())
-    return jsonify(all_states)
+    """Retrieves the list of all State"""
+    all_state = storage.all(State).values()
+    states_list = []
+    for state in all_state:
+        states_list.append(state.to_dict())
+    return jsonify(states_list)
 
 
 @app_views.route("/states/<state_id>", methods=["GET"], strict_slashes=False)
@@ -40,12 +43,10 @@ def delete_state(state_id):
 def new_state():
     """Creates a State object"""
     state_data = request.get_json()
-
     if not state_data:
         abort(400, "Not a JSON")
-    if "name" not in state_data:
+    elif "name" not in state_data:
         abort(400, "Missing name")
-
     new_state = State(**state_data)
     new_state.save()
     return jsonify(new_state.to_dict()), 201
